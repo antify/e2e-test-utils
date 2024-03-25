@@ -1,0 +1,35 @@
+{
+  "name": "@antify/e2e-test-utils",
+  "version": "1.0.0",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "prepack": "unbuild",
+    "release": "standard-version && pnpm publish && git push --follow-tags",
+    "lint": "eslint .",
+    "cy:open": "cypress open"
+  },
+  "devDependencies": {
+    "@nuxt/eslint-config": "^0.2.0",
+    "eslint": "^8.56.0",
+    "eslint-plugin-storybook": "^0.8.0",
+    "standard-version": "latest",
+    "typescript": "^5.3.3",
+    "unbuild": "^2.0.0"
+  },
+  "peerDependencies": {
+    "cypress": "^13.6.4"
+  }
+}
