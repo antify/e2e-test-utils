@@ -107,10 +107,10 @@ export class CrudListingTests extends AllTestsRunnable {
 				cy.get('[data-e2e=table] [data-e2e=edit-button]').should('exist');
 				cy.get('[data-e2e=table] [data-e2e=delete-button]').should('exist');
 
-				cy.log('And I should see that there are 0 - 20 of 100 entries');
+				cy.log('And I should see that there are 1 - 20 of 100 entries');
 				cy.get('[data-e2e=items-per-page]').contains('Items per page');
 				cy.get('[data-e2e=items-per-page] [data-e2e=select]').contains('20');
-				cy.get('[data-e2e=items-per-page]').contains('0 - 20');
+				cy.get('[data-e2e=items-per-page]').contains('1 - 20');
 				cy.get('[data-e2e=items-per-page]').contains('of');
 				cy.get('[data-e2e=items-per-page]').contains('100');
 
