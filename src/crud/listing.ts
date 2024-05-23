@@ -17,7 +17,7 @@ type ListingHooks = {
 			 * - that the listing table contains correct columns
 			 * - that special buttons in table nav bar are shown and not in skeleton state anymore
 			 */
-			whenDataAreLoaded: () => void
+			whenDataIsLoaded: () => void
 		}
 	}
 
@@ -89,7 +89,7 @@ export class CrudListingTests extends AllTestsRunnable {
 				cy.get('[data-e2e=crud-table-nav] [data-e2e=items-per-page]').should('exist');
 				cy.get('[data-e2e=crud-table-nav] [data-e2e=pagination]').should('exist');
 
-				this.hooks.loadAndShowTheListingPage.scenarioInitialLoadTheListingPage.whenDataAreLoaded();
+				this.hooks.loadAndShowTheListingPage.scenarioInitialLoadTheListingPage.whenDataIsLoaded();
 			});
 
 			it('Scenario: On a filled database, the user should see a list of entries', () => {

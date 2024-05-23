@@ -22,7 +22,7 @@ useCrudListingTests(config ,
 	{
 		loadAndShowTheListingPage: {
 			scenarioInitialLoadTheListingPage: {
-				whenDataAreLoaded: () => {
+				whenDataIsLoaded: () => {
 					cy.log('Then I should see the table with manufacturer, model, type and color as table header');
 					expect(cy.get('[data-e2e=table] th').contains('Manufacturer'));
 					expect(cy.get('[data-e2e=table] th').contains('Model'));
