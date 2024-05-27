@@ -77,7 +77,7 @@ export class CrudListingTests extends AllTestsRunnable {
 
 				this.hooks.loadAndShowTheListingPage.scenarioInitialLoadTheListingPage.whenIVisitThePage?.();
 
-				cy.log('When the data are loaded');
+				cy.log('When the data is loaded');
 				cy.log('Then I should see no elements in skeleton state anymore');
 				cy.get('[data-e2e=crud] [data-e2e=skeleton]').should('not.exist');
 
@@ -183,7 +183,7 @@ export class CrudListingTests extends AllTestsRunnable {
 				cy.log('Then I see that the table is in loading state');
 				cy.get('[data-e2e=crud] [data-e2e=spinner]').should('exist');
 
-				cy.log('When the data are loaded');
+				cy.log('When the data is loaded');
 				cy.log('Then I see no spinner anymore');
 				cy.get('[data-e2e=crud] [data-e2e=spinner]').should('not.exist');
 
@@ -314,7 +314,7 @@ export function testCustomTableFilterScenario(hooks: {
 	cy.log('Then I see the table is in loading state');
 	cy.get('[data-e2e=table] [data-e2e=spinner]').should('exist');
 
-	cy.log('When the data are loaded');
+	cy.log('When the data is loaded');
 	cy.log('Then I see no spinner anymore');
 	cy.get('[data-e2e=table] [data-e2e=spinner]').should('not.exist');
 
