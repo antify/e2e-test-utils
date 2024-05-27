@@ -102,12 +102,27 @@ export class CrudListingTests extends AllTestsRunnable {
 				cy.log('When I visit the listing page');
 				cy.visit(this.config.listingUrl);
 
-				cy.log('Then I should see the table with duplicate, edit and delete buttons for each row');
-				cy.get('[data-e2e=table] [data-e2e=duplicate-button]').should('exist');
-				cy.get('[data-e2e=table] [data-e2e=edit-button]').should('exist');
-				cy.get('[data-e2e=table] [data-e2e=delete-button]').should('exist');
+				if (this.config.isDeleteAble !== false) {
+					cy.log('Then I should see the table with delete buttons for each row in action column');
+					cy.get('[data-e2e=table] [data-e2e=delete-button]').should('exist');
+				}
 
-				cy.log('And I should see that there are 1 - 20 of 100 entries');
+				if (this.config.hasUpdatePage !== false) {
+					cy.log((this.config.isDeleteAble !== false ? 'And' : 'Then') + ' I should see the table with edit buttons for each row in action column');
+					cy.get('[data-e2e=table] [data-e2e=edit-button]').should('exist');
+				}
+
+				if (this.config.isDuplicateAble !== false) {
+					cy.log((this.config.isDeleteAble !== false || this.config.hasUpdatePage !== false ?
+							'And' : 'Then') +
+						' I should see the table with duplicate buttons for each row in action column');
+					cy.get('[data-e2e=table] [data-e2e=duplicate-button]').should('exist');
+				}
+
+				cy.log(
+					(this.config.isDeleteAble !== false || this.config.hasUpdatePage !== false || this.config.isDuplicateAble !== false ?
+						'And' : 'Then') +
+						' I should see that there are 1 - 20 of 100 entries');
 				cy.get('[data-e2e=items-per-page]').contains('Items per page');
 				cy.get('[data-e2e=items-per-page] [data-e2e=select]').contains('20');
 				cy.get('[data-e2e=items-per-page]').contains('1 - 20');
@@ -247,31 +262,31 @@ export class CrudListingTests extends AllTestsRunnable {
 		describe('Feature: Filtering the table', () => {
 			this.hooks.filteringTheTable?.customFilterScenarios?.();
 
-		// 	if (handleCrudActionSupport(this.config, CrudAction.hasSearchFilter)) {
-		// 		it('Scenario: On a filled database, the user filter by search text and get some results', () => {
-		// 			testCustomTableFilterScenario({
-		// 				filterAction: () => {
-		// 					cy.log('When I type "a b c" into the search bar');
-		// 					cy.get('[data-e2e=search] input').type('a');
-		//
-		// 					cy.log('Then the search query is in the url query');
-		// 					cy.url().should('contain', 'search=a');
-		// 				}
-		// 			}, this.config);
-		// 		});
-		//
-		// 		it('Scenario: On a filled database, the user filter by search text and get no results', () => {
-		// 			testCustomTableFilterWithEmptyResultScenario({
-		// 				filterAction: () => {
-		// 					cy.log('When I type "a b c" into the search bar');
-		// 					cy.get('[data-e2e=search] input').type('a b c');
-		//
-		// 					cy.log('Then the search query is in the url query');
-		// 					cy.url().should('contain', 'search=a+b+c');
-		// 				}
-		// 			}, this.config);
-		// 		});
-		// 	}
+			// 	if (handleCrudActionSupport(this.config, CrudAction.hasSearchFilter)) {
+			// 		it('Scenario: On a filled database, the user filter by search text and get some results', () => {
+			// 			testCustomTableFilterScenario({
+			// 				filterAction: () => {
+			// 					cy.log('When I type "a b c" into the search bar');
+			// 					cy.get('[data-e2e=search] input').type('a');
+			//
+			// 					cy.log('Then the search query is in the url query');
+			// 					cy.url().should('contain', 'search=a');
+			// 				}
+			// 			}, this.config);
+			// 		});
+			//
+			// 		it('Scenario: On a filled database, the user filter by search text and get no results', () => {
+			// 			testCustomTableFilterWithEmptyResultScenario({
+			// 				filterAction: () => {
+			// 					cy.log('When I type "a b c" into the search bar');
+			// 					cy.get('[data-e2e=search] input').type('a b c');
+			//
+			// 					cy.log('Then the search query is in the url query');
+			// 					cy.url().should('contain', 'search=a+b+c');
+			// 				}
+			// 			}, this.config);
+			// 		});
+			// 	}
 		});
 	}
 }
