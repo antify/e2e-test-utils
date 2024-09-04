@@ -203,7 +203,7 @@ export class CrudListingTests extends AllTestsRunnable {
 				cy.get('[data-e2e=crud] [data-e2e=spinner]').should('not.exist');
 
 				cy.log('And in pagination, the second page is active');
-				cy.get('[data-e2e=pagination] [data-e2e=button]:contains("2")').should('have.data', 'e2eColorType', 'primary');
+				cy.get('[data-e2e=pagination] [data-e2e=button]:contains("2")').should('have.data', 'e2eState', 'primary');
 
 				cy.log('And the current page is in url query');
 				cy.url().should('contain', 'p=2');
