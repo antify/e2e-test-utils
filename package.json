@@ -17,10 +17,11 @@
     "dist"
   ],
   "scripts": {
+    "build": "unbuild",
     "prepack": "unbuild",
     "release": "standard-version && pnpm publish && git push --follow-tags",
     "lint": "eslint .",
-    "cy:open": "cypress open"
+    "dev": "cypress open"
   },
   "devDependencies": {
     "@nuxt/eslint-config": "^0.2.0",
