@@ -16,17 +16,12 @@ export type CrudActionsConfig = { [key in CrudAction]?: boolean }
 
 export type AuthConfig = {
 	/**
-	 * Key of the cookie which contains the jwt token
+	 * Cookies with permissions to create, read, update and delete entries
 	 */
-	tokenCookieKey: string
+	cookieValueWithPermissions: Record<string, string>
 
 	/**
-	 * Valid jwt token with permissions to create, read, update and delete entries
+	 * Cookies with no permissions
 	 */
-	validJwtWithCrudPermissions: string
-
-	/**
-	 * Valid jwt token with no permissions
-	 */
-	validJwtWithoutCrudPermissions: string
+	cookieValueWithoutPermissions: Record<string, string>
 }

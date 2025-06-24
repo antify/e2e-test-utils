@@ -42,6 +42,12 @@ export type ListingConfig = CrudActionsConfig & AuthConfig & {
 	 */
 	hasListingPage?: true
 
+	amountOfEntries?: number
+
+	amountOfPages?: number
+
+	itemsPerPage?: number
+
 	/**
 	 * Url to visit the listing page
 	 */
@@ -63,10 +69,24 @@ export class CrudListingTests extends AllTestsRunnable {
 	}
 
 	loadAndShowTheListingPage() {
+		if (!this.config.amountOfEntries) {
+			this.config.amountOfEntries = 100;
+		}
+
+		if (!this.config.amountOfPages) {
+			this.config.amountOfPages = 5;
+		}
+
+		if (!this.config.itemsPerPage) {
+			this.config.itemsPerPage = 20;
+		}
+
 		describe('Feature: Load and show the listing page', () => {
 			it('Scenario: Initial load the listing page', () => {
 				cy.log('Given I am logged in as a user with permissions to read all entries');
-				cy.setCookie(this.config.tokenCookieKey, this.config.validJwtWithCrudPermissions);
+				for (const [key, value] of Object.entries(this.config.cookieValueWithPermissions)) {
+					cy.setCookie(key, value);
+				}
 
 				cy.log('When I visit the listing page');
 				cy.visit(this.config.listingUrl);
@@ -94,9 +114,11 @@ export class CrudListingTests extends AllTestsRunnable {
 
 			it('Scenario: On a filled database, the user should see a list of entries', () => {
 				cy.log('Given I am logged in as a user with permissions to read all entries');
-				cy.setCookie(this.config.tokenCookieKey, this.config.validJwtWithCrudPermissions);
+				for (const [key, value] of Object.entries(this.config.cookieValueWithPermissions)) {
+					cy.setCookie(key, value);
+				}
 
-				cy.log('And there are 100 entries in the database');
+				cy.log(`And there are ${this.config.amountOfEntries} entries in the database`);
 				this.config.loadFixtures();
 
 				cy.log('When I visit the listing page');
@@ -122,24 +144,33 @@ export class CrudListingTests extends AllTestsRunnable {
 				cy.log(
 					(this.config.isDeleteAble !== false || this.config.hasUpdatePage !== false || this.config.isDuplicateAble !== false ?
 						'And' : 'Then') +
-						' I should see that there are 1 - 20 of 100 entries');
-				cy.get('[data-e2e=items-per-page]').contains('Items per page');
-				cy.get('[data-e2e=items-per-page] [data-e2e=select]').contains('20');
-				cy.get('[data-e2e=items-per-page]').contains('1 - 20');
-				cy.get('[data-e2e=items-per-page]').contains('of');
-				cy.get('[data-e2e=items-per-page]').contains('100');
+						` I should see that there are 1 - ${this.config.itemsPerPage} of ${this.config.amountOfEntries} entries`);
+				cy.get('[data-e2e=items-per-page]').contains(/Items per page|Einträge pro Seite/);
+				cy.get('[data-e2e=items-per-page] [data-e2e=select]').contains(`${this.config.itemsPerPage}`);
+				cy.get('[data-e2e=items-per-page]').contains(`1 - ${this.config.itemsPerPage}`);
+				cy.get('[data-e2e=items-per-page]').contains(/of|von/);
+				cy.get('[data-e2e=items-per-page]').contains(`${this.config.amountOfEntries}`);
 
-				cy.log('And I should see the pagination with 5 pages');
-				cy.get('[data-e2e=crud-table-nav] [data-e2e=pagination]').contains('1');
-				cy.get('[data-e2e=crud-table-nav] [data-e2e=pagination]').contains('2');
-				cy.get('[data-e2e=crud-table-nav] [data-e2e=pagination]').contains('3');
-				cy.get('[data-e2e=crud-table-nav] [data-e2e=pagination]').contains('...');
-				cy.get('[data-e2e=crud-table-nav] [data-e2e=pagination]').contains('5');
+				cy.log(`And I should see the pagination with ${this.config.amountOfPages} pages`);
+
+				if (this.config.amountOfPages! <= 3) {
+					for(let i = 1; i <= this.config.amountOfPages!; i++) {
+						cy.get('[data-e2e=crud-table-nav] [data-e2e=pagination]').contains(`${i}`);
+					}
+				} else {
+					cy.get('[data-e2e=crud-table-nav] [data-e2e=pagination]').contains('1');
+					cy.get('[data-e2e=crud-table-nav] [data-e2e=pagination]').contains('2');
+					cy.get('[data-e2e=crud-table-nav] [data-e2e=pagination]').contains('3');
+					cy.get('[data-e2e=crud-table-nav] [data-e2e=pagination]').contains('...');
+					cy.get('[data-e2e=crud-table-nav] [data-e2e=pagination]').contains(`${this.config.amountOfPages}`);
+				}
 			});
 
 			it('Scenario: On an empty database, a describe text should get shown', () => {
 				cy.log('Given I am logged in as a user with permissions to read all entries');
-				cy.setCookie(this.config.tokenCookieKey, this.config.validJwtWithCrudPermissions);
+				for (const [key, value] of Object.entries(this.config.cookieValueWithPermissions)) {
+					cy.setCookie(key, value);
+				}
 
 				cy.log('And there are no entries in the database');
 				this.config.truncateEntries();
@@ -166,7 +197,9 @@ export class CrudListingTests extends AllTestsRunnable {
 				}).as('getList');
 
 				cy.log('Given I am logged in as a user with permissions to read all entries');
-				cy.setCookie(this.config.tokenCookieKey, this.config.validJwtWithCrudPermissions);
+				for (const [key, value] of Object.entries(this.config.cookieValueWithPermissions)) {
+					cy.setCookie(key, value);
+				}
 
 				cy.log('And I am on the listing page');
 				cy.visit(this.config.listingUrl);
@@ -184,9 +217,11 @@ export class CrudListingTests extends AllTestsRunnable {
 		describe('Feature: Paginate listing table', () => {
 			it('Scenario: Switch from page one to two', () => {
 				cy.log('Given I am logged in as a user with permissions to read all entries');
-				cy.setCookie(this.config.tokenCookieKey, this.config.validJwtWithCrudPermissions);
+				for (const [key, value] of Object.entries(this.config.cookieValueWithPermissions)) {
+					cy.setCookie(key, value);
+				}
 
-				cy.log('And there are 100 entries in the database');
+				cy.log(`And there are ${this.config.amountOfEntries} entries in the database`);
 				this.config.loadFixtures();
 
 				cy.log('And I am on the listing page');
@@ -226,9 +261,11 @@ export class CrudListingTests extends AllTestsRunnable {
 		describe('Feature: Delete entries from table', () => {
 			it('Scenario: Delete an entry from listing page', () => {
 				cy.log('Given I am logged in as a user with permissions to read all entries');
-				cy.setCookie(this.config.tokenCookieKey, this.config.validJwtWithCrudPermissions);
+				for (const [key, value] of Object.entries(this.config.cookieValueWithPermissions)) {
+					cy.setCookie(key, value);
+				}
 
-				cy.log('And there are 100 entries in the database');
+				cy.log(`And there are ${this.config.amountOfEntries} entries in the database`);
 				this.config.loadFixtures();
 
 				cy.log('And I am on the listing page');
@@ -241,7 +278,7 @@ export class CrudListingTests extends AllTestsRunnable {
 				cy.get('[data-e2e=delete-dialog]').should('be.visible');
 
 				cy.log('When I click on the delete button in the delete dialog');
-				cy.get('[data-e2e=delete-dialog] [data-e2e=button]:contains("Delete")').click(); // TODO:: Change from data-e2e=button to data-e2e=delete-button
+				cy.get('[data-e2e=delete-dialog] [data-e2e=delete-button]').click();
 
 				cy.log('Then the table is in loading state');
 				cy.get('[data-e2e=table] [data-e2e=spinner]').should('exist');
@@ -249,11 +286,11 @@ export class CrudListingTests extends AllTestsRunnable {
 				cy.log('And the dialog is closed');
 				cy.get('[data-e2e=delete-dialog]').should('not.exist');
 
-				cy.log('And the items per page shows that there are 99 entries');
-				cy.get('[data-e2e=items-per-page]').should('contain', '99');
+				cy.log(`And the items per page shows that there are ${this.config.amountOfEntries! - 1} entries`);
+				cy.get('[data-e2e=items-per-page]').should('contain', `${this.config.amountOfEntries! - 1}`);
 
 				cy.log('And a toast is visible with the message "deleted"');
-				cy.get('[data-e2e=toast]:contains("Deleted")').should('be.visible');
+				cy.get('[data-e2e=toast]').contains(/Deleted|Gelöscht/).should('be.visible');
 			})
 		});
 	}
@@ -316,9 +353,11 @@ export function testCustomTableFilterScenario(hooks: {
 	expectedPaginationBehavior?: () => void
 }, config: ListingConfig) {
 	cy.log('Given I am logged in as a user with permissions to read all entries');
-	cy.setCookie(config.tokenCookieKey, config.validJwtWithCrudPermissions);
+	for (const [key, value] of Object.entries(config.cookieValueWithPermissions)) {
+		cy.setCookie(key, value);
+	}
 
-	cy.log('And there are 100 entries in the database');
+	cy.log(`And there are ${config.amountOfEntries || '100'} entries in the database`);
 	config.loadFixtures();
 
 	cy.log('And I am on the listing page');
@@ -334,15 +373,15 @@ export function testCustomTableFilterScenario(hooks: {
 	cy.get('[data-e2e=table] [data-e2e=spinner]').should('not.exist');
 
 	if (!hooks.expectedTableBehavior) {
-		cy.log('And I see the table with less than 100 entries');
-		cy.get('[data-e2e=table] tr').should('have.length.lessThan', 100);
+		cy.log(`And I see the table with less than ${config.amountOfEntries || '100'} entries`);
+		cy.get('[data-e2e=table] tr').should('have.length.lessThan', config.amountOfEntries || '100');
 	} else {
 		hooks.expectedTableBehavior();
 	}
 
 	if (!hooks.expectedPaginationBehavior) {
-		cy.log('And I see, that the amount of entries in the pagination is less than 100');
-		cy.get('[data-e2e=total-items]').should('have.length.lessThan', 100);
+		cy.log(`And I see, that the amount of entries in the pagination is less than ${config.amountOfEntries || '100'}`);
+		cy.get('[data-e2e=total-items]').should('have.length.lessThan', config.amountOfEntries || '100');
 		// TODO:: test pagination buttons (amount / items per page) = count buttons
 	} else {
 		hooks.expectedPaginationBehavior();
