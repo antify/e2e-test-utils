@@ -357,7 +357,7 @@ export function testCustomTableFilterScenario(hooks: {
 		cy.setCookie(key, value);
 	}
 
-	cy.log(`And there are ${config.amountOfEntries || '100'} entries in the database`);
+	cy.log(`And there are ${config.amountOfEntries} entries in the database`);
 	config.loadFixtures();
 
 	cy.log('And I am on the listing page');
@@ -373,15 +373,15 @@ export function testCustomTableFilterScenario(hooks: {
 	cy.get('[data-e2e=table] [data-e2e=spinner]').should('not.exist');
 
 	if (!hooks.expectedTableBehavior) {
-		cy.log(`And I see the table with less than ${config.amountOfEntries || '100'} entries`);
-		cy.get('[data-e2e=table] tr').should('have.length.lessThan', config.amountOfEntries || '100');
+		cy.log(`And I see the table with less than ${config.amountOfEntries} entries`);
+		cy.get('[data-e2e=table] tr').should('have.length.lessThan', config.amountOfEntries);
 	} else {
 		hooks.expectedTableBehavior();
 	}
 
 	if (!hooks.expectedPaginationBehavior) {
-		cy.log(`And I see, that the amount of entries in the pagination is less than ${config.amountOfEntries || '100'}`);
-		cy.get('[data-e2e=total-items]').should('have.length.lessThan', config.amountOfEntries || '100');
+		cy.log(`And I see, that the amount of entries in the pagination is less than ${config.amountOfEntries}`);
+		cy.get('[data-e2e=total-items]').should('have.length.lessThan', config.amountOfEntries);
 		// TODO:: test pagination buttons (amount / items per page) = count buttons
 	} else {
 		hooks.expectedPaginationBehavior();
