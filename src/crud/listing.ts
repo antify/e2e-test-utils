@@ -48,6 +48,8 @@ export type ListingConfig = CrudActionsConfig & AuthConfig & {
 
 	itemsPerPage?: number
 
+	hasPagination?: boolean
+
 	/**
 	 * Url to visit the listing page
 	 */
@@ -81,6 +83,10 @@ export class CrudListingTests extends AllTestsRunnable {
 			this.config.itemsPerPage = 20;
 		}
 
+		if (this.config.hasPagination === undefined) {
+			this.config.hasPagination = true;
+		}
+
 		describe('Feature: Load and show the listing page', () => {
 			it('Scenario: Initial load the listing page', () => {
 				cy.log('Given I am logged in as a user with permissions to read all entries');
@@ -105,9 +111,11 @@ export class CrudListingTests extends AllTestsRunnable {
 				cy.get('[data-e2e=crud-table-filter] [data-e2e=search]').should('exist');
 				cy.get('[data-e2e=crud-table-filter] [data-e2e=create-button]').should('exist');
 
-				cy.log('And I should see the pagination bar with number of entries, items per page and the page switcher');
-				cy.get('[data-e2e=crud-table-nav] [data-e2e=items-per-page]').should('exist');
-				cy.get('[data-e2e=crud-table-nav] [data-e2e=pagination]').should('exist');
+				if (this.config.hasPagination) {
+					cy.log('And I should see the pagination bar with number of entries, items per page and the page switcher');
+					cy.get('[data-e2e=crud-table-nav] [data-e2e=items-per-page]').should('exist');
+					cy.get('[data-e2e=crud-table-nav] [data-e2e=pagination]').should('exist');
+				}
 
 				this.hooks.loadAndShowTheListingPage.scenarioInitialLoadTheListingPage.whenDataIsLoaded();
 			});
@@ -141,28 +149,30 @@ export class CrudListingTests extends AllTestsRunnable {
 					cy.get('[data-e2e=table] [data-e2e=duplicate-button]').should('exist');
 				}
 
-				cy.log(
-					(this.config.isDeleteAble !== false || this.config.hasUpdatePage !== false || this.config.isDuplicateAble !== false ?
-						'And' : 'Then') +
-						` I should see that there are 1 - ${this.config.itemsPerPage} of ${this.config.amountOfEntries} entries`);
-				cy.get('[data-e2e=items-per-page]').contains(/Items per page|Einträge pro Seite/);
-				cy.get('[data-e2e=items-per-page] [data-e2e=select]').contains(`${this.config.itemsPerPage}`);
-				cy.get('[data-e2e=items-per-page]').contains(`1 - ${this.config.itemsPerPage}`);
-				cy.get('[data-e2e=items-per-page]').contains(/of|von/);
-				cy.get('[data-e2e=items-per-page]').contains(`${this.config.amountOfEntries}`);
+				if (this.config.hasPagination) {
+					cy.log(
+						(this.config.isDeleteAble !== false || this.config.hasUpdatePage !== false || this.config.isDuplicateAble !== false ?
+							'And' : 'Then') +
+						` I should see that there are 1 - ${this.config.amountOfEntries! < this.config.itemsPerPage! ? this.config.amountOfEntries : this.config.itemsPerPage} of ${this.config.amountOfEntries} entries`);
+					cy.get('[data-e2e=items-per-page]').contains(/Items per page|Einträge pro Seite/);
+					cy.get('[data-e2e=items-per-page] [data-e2e=select]').contains(`${this.config.itemsPerPage}`);
+					cy.get('[data-e2e=items-per-page]').contains(`1 - ${this.config.amountOfEntries! < this.config.itemsPerPage! ? this.config.amountOfEntries : this.config.itemsPerPage}`);
+					cy.get('[data-e2e=items-per-page]').contains(/of|von/);
+					cy.get('[data-e2e=items-per-page]').contains(`${this.config.amountOfEntries}`);
 
-				cy.log(`And I should see the pagination with ${this.config.amountOfPages} pages`);
+					cy.log(`And I should see the pagination with ${this.config.amountOfPages} pages`);
 
-				if (this.config.amountOfPages! <= 3) {
-					for(let i = 1; i <= this.config.amountOfPages!; i++) {
-						cy.get('[data-e2e=crud-table-nav] [data-e2e=pagination]').contains(`${i}`);
+					if (this.config.amountOfPages! <= 3) {
+						for (let i = 1; i <= this.config.amountOfPages!; i++) {
+							cy.get('[data-e2e=crud-table-nav] [data-e2e=pagination]').contains(`${i}`);
+						}
+					} else {
+						cy.get('[data-e2e=crud-table-nav] [data-e2e=pagination]').contains('1');
+						cy.get('[data-e2e=crud-table-nav] [data-e2e=pagination]').contains('2');
+						cy.get('[data-e2e=crud-table-nav] [data-e2e=pagination]').contains('3');
+						cy.get('[data-e2e=crud-table-nav] [data-e2e=pagination]').contains('...');
+						cy.get('[data-e2e=crud-table-nav] [data-e2e=pagination]').contains(`${this.config.amountOfPages}`);
 					}
-				} else {
-					cy.get('[data-e2e=crud-table-nav] [data-e2e=pagination]').contains('1');
-					cy.get('[data-e2e=crud-table-nav] [data-e2e=pagination]').contains('2');
-					cy.get('[data-e2e=crud-table-nav] [data-e2e=pagination]').contains('3');
-					cy.get('[data-e2e=crud-table-nav] [data-e2e=pagination]').contains('...');
-					cy.get('[data-e2e=crud-table-nav] [data-e2e=pagination]').contains(`${this.config.amountOfPages}`);
 				}
 			});
 
@@ -181,8 +191,10 @@ export class CrudListingTests extends AllTestsRunnable {
 				cy.log('Then I should see the table with no entries and a describe text');
 				cy.get('[data-e2e=table]').contains('We couldn\'t find any entry');
 
-				cy.log('And I should see the pagination with only one page');
-				cy.get('[data-e2e=crud-table-nav] [data-e2e=pagination]').contains('1');
+				if (this.config.hasPagination) {
+					cy.log('And I should see the pagination with only one page');
+					cy.get('[data-e2e=crud-table-nav] [data-e2e=pagination]').contains('1');
+				}
 			});
 
 			// TODO:: Test on production mode. There should be no sensitive data shown and a friendly message should be shown.
@@ -214,6 +226,10 @@ export class CrudListingTests extends AllTestsRunnable {
 	}
 
 	paginateListingTable() {
+		if (!this.config.hasPagination) {
+			return;
+		}
+
 		describe('Feature: Paginate listing table', () => {
 			it('Scenario: Switch from page one to two', () => {
 				cy.log('Given I am logged in as a user with permissions to read all entries');
@@ -286,8 +302,10 @@ export class CrudListingTests extends AllTestsRunnable {
 				cy.log('And the dialog is closed');
 				cy.get('[data-e2e=delete-dialog]').should('not.exist');
 
-				cy.log(`And the items per page shows that there are ${this.config.amountOfEntries! - 1} entries`);
-				cy.get('[data-e2e=items-per-page]').should('contain', `${this.config.amountOfEntries! - 1}`);
+				if (this.config.hasPagination) {
+					cy.log(`And the items per page shows that there are ${this.config.amountOfEntries! - 1} entries`);
+					cy.get('[data-e2e=items-per-page]').should('contain', `${this.config.amountOfEntries! - 1}`);
+				}
 
 				cy.log('And a toast is visible with the message "deleted"');
 				cy.get('[data-e2e=toast]').contains(/Deleted|Gelöscht/).should('be.visible');
