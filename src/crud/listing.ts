@@ -189,7 +189,7 @@ export class CrudListingTests extends AllTestsRunnable {
 				cy.visit(this.config.listingUrl);
 
 				cy.log('Then I should see the table with no entries and a describe text');
-				cy.get('[data-e2e=table]').contains('We couldn\'t find any entry');
+				cy.get('[data-e2e=table]').contains(/We couldn't find any entry|Es konnten keine Einträge gefunden werden/).should('be.visible');
 
 				if (this.config.hasPagination) {
 					cy.log('And I should see the pagination with only one page');
@@ -421,7 +421,7 @@ export function testCustomTableFilterWithEmptyResultScenario(hooks: {
 
 		expectedTableBehavior: () => {
 			cy.log('And I see the table with no entries');
-			cy.get('[data-e2e=table]').should('contain', 'We couldn\'t find any entry');
+			cy.get('[data-e2e=table]').contains(/We couldn't find any entry|Es konnten keine Einträge gefunden werden/).should('be.visible');
 		},
 
 		expectedPaginationBehavior: () => {
