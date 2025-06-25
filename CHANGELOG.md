@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0](https://github.com/antify/e2e-test-utils/compare/v1.0.2...v1.1.0) (2025-06-25)
+
+
+### Features
+
+* Add prop "hasPagination" ([bbec6d4](https://github.com/antify/e2e-test-utils/commit/bbec6d41c80b4372848183a31139f5f150ed613b))
+
 ### [1.0.2](https://github.com/antify/e2e-test-utils/compare/v1.0.1...v1.0.2) (2025-06-24)
 
 
